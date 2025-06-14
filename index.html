@@ -1,62 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Harvest Simulator - WebGL</title>
+  <meta charset="UTF-8" />
+  <title>Harvest Simulator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <meta name="theme-color" content="#000000" />
-  <link rel="icon" href="https://a.poki-cdn.com/img/favicon.ico" />
-  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="favicon.ico" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="manifest" href="manifest.json" />
 
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      background: #000;
-      overflow: hidden;
+      background-color: #000;
       width: 100%;
       height: 100%;
+      overflow: hidden;
       font-family: sans-serif;
     }
+
     canvas {
-      display: block;
       width: 100% !important;
       height: 100% !important;
+      display: block;
+      background-color: #000;
       image-rendering: pixelated;
-      will-change: transform;
     }
+
     #loadingScreen {
-      position: absolute;
+      position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
       background: #111;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       color: #ffa800;
-      font-size: 24px;
-      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4em;
+      z-index: 100;
     }
   </style>
 
-  <!-- Poki SDK (optional, remove if not using Poki) -->
-  <script src="https://game-cdn.poki.com/scripts/v2/poki-sdk.js"></script>
-
-  <!-- Game Engine & Config -->
+  <!-- Engine and Settings -->
   <script src="playcanvas-stable.min.js"></script>
   <script src="__settings__.js"></script>
 </head>
-
 <body>
   <div id="loadingScreen">Loading Harvest Simulator...</div>
 
   <script>
-    // Boost FPS by reducing internal resolution
-    window.devicePixelRatio = 0.5; // 0.5 = 4x less pixels rendered
+    // Max FPS boost: scale rendering down
+    window.devicePixelRatio = 0.5;
 
-    // Optionally delay to ensure everything is initialized
-    window.addEventListener('load', function () {
+    window.addEventListener('load', () => {
       const canvas = document.createElement('canvas');
       document.body.appendChild(canvas);
 
@@ -65,29 +62,26 @@
         touch: new pc.TouchDevice(canvas),
         graphicsDeviceOptions: {
           alpha: false,
-          antialias: false, // better FPS
-          preserveDrawingBuffer: false,
-          powerPreference: "high-performance"
+          antialias: false,
+          powerPreference: "high-performance",
+          preserveDrawingBuffer: false
         }
       });
 
-      // Start game loading pipeline
       app.start();
 
-      // Resize canvas on window resize
-      window.addEventListener("resize", function () {
-        app.resizeCanvas(canvas.width, canvas.height);
-      });
+      // Resize immediately and on window change
+      const resize = () => app.resizeCanvas(canvas.width, canvas.height);
+      resize();
+      window.addEventListener("resize", resize);
 
-      // Remove loading screen once initialized
-      setTimeout(() => {
-        const loadingScreen = document.getElementById("loadingScreen");
-        if (loadingScreen) loadingScreen.remove();
-      }, 1000);
+      // Remove loading screen
+      const loading = document.getElementById('loadingScreen');
+      if (loading) loading.remove();
     });
   </script>
 
-  <!-- Game Code -->
+  <!-- WASM and Game Code -->
   <script src="__modules__.js"></script>
   <script src="__start__.js"></script>
   <script src="__loading__.js"></script>
